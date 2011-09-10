@@ -25,9 +25,11 @@ maps =
     }
   ]
 
-main :: IO ()
-main = resolveMaps maps (\p e -> if e == ExitSuccess
-                                   then do d <- ("/mnt/sdb/public/map/Garmin/" ++) . showGregorian . utctDay <$> getCurrentTime
-                                           mkdir d
-                                           mapM_ (\z -> copyFile z (d </> takeFileName z)) p
-                                   else print e)
+main ::
+  IO ()
+main =
+  resolveMaps maps (\p e -> if e == ExitSuccess
+                              then do d <- ("/mnt/sdb/public/map/Garmin/" ++) . showGregorian . utctDay <$> getCurrentTime
+                                      mkdir d
+                                      mapM_ (\z -> copyFile z (d </> takeFileName z)) p
+                              else print e)
