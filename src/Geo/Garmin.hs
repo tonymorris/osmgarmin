@@ -123,7 +123,7 @@ work ::
   IO FilePath
 work =
   do t <- getTemporaryDirectory
-     let d = t </> "build.garmin"
+     let d = t </> "osmgarmin"
      mkdir d
      return d
 
@@ -138,7 +138,6 @@ system' ::
   -> String
   -> IO ExitCode
 system' c s =
-  print (c ++ ' ' : s) >>
   system (c ++ ' ' : s)
 
 bzip ::
