@@ -150,7 +150,7 @@ wget ::
   String
   -> IO ExitCode
 wget =
-  system' "wget"
+  system' "wget -q"
 
 java ::
   String
