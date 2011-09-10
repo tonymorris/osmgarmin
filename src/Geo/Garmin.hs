@@ -109,10 +109,10 @@ chdirw :: IO a -> IO a
 chdirw = (work >>=) . flip chdir
 
 withWorkFile :: String -> String -> (FilePath -> IO a) -> IO FilePath
-withWorkFile pre post f = do work
+withWorkFile pre post f = do _ <- work
                              t <- getCurrentTime
                              let k = pre ++ ((\c -> if isSpace c then '_' else c) <$> show t) ++ post
-                             f k
+                             _ <- f k
                              return k
 
 resolveSource :: Map -> IO FilePath
@@ -127,8 +127,8 @@ cleanImg :: IO ()
 cleanImg = mapM_ rm ["63240000.img", "63240000.tdb", "areas.list", "template.args", "osmmap.img", "osmmap.tdb"]
 
 resolveMapType :: MapType -> FilePath -> IO FilePath
-resolveMapType (OpenStreetMap i) f = chdirw (do splitter (f ++ " --cache --mapid=" ++ mid i)
-                                                mkgmap ("--route --latin1 --net --code-page=1252 --transparent --gmapsupp -c template.args")
+resolveMapType (OpenStreetMap i) f = chdirw (do _ <- splitter (f ++ " --cache --mapid=" ++ mid i)
+                                                _ <- mkgmap ("--route --latin1 --net --code-page=1252 --transparent --gmapsupp -c template.args")
                                                 loop_
                                                   ((or <$>) . mapM doesFileExist)
                                                   (mapM_ rm)
