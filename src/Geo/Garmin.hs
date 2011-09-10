@@ -138,6 +138,7 @@ system' ::
   -> String
   -> IO ExitCode
 system' c s =
+  print (c ++ ' ' : s) >>
   system (c ++ ' ' : s)
 
 bzip ::
