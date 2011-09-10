@@ -7,7 +7,6 @@ import System.Environment
 import System.FilePath
 import Data.Time.Clock
 import Data.Time.Calendar
-import Control.Applicative
 
 maps ::
   [Map]
@@ -34,7 +33,8 @@ main =
        [] -> putStrLn "Usage: osmgarmin <output-dir>" >> exitWith (ExitFailure 107)
        (o:_) ->  resolveMaps maps (\p e -> if e == ExitSuccess
                                              then
-                                               do d <- (o ++) . showGregorian . utctDay <$> getCurrentTime
+                                               do UTCTime d' t' <- getCurrentTime
+                                                  let d = o </> showGregorian d' </> show t'
                                                   mkdir d
                                                   mapM_ (\z -> copyFile z (d </> takeFileName z)) p
                                              else
