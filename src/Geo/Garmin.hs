@@ -255,7 +255,7 @@ resolveMap m =
 
 resolveMaps ::
   [Map]
-  -> ([FilePath] -> ExitCode -> IO a)
+  -> (FilePath -> ExitCode -> IO a)
   -> IO a
 resolveMaps m f =
   chdirw (do p <- mapM resolveMap m
@@ -263,5 +263,5 @@ resolveMaps m f =
              cleanImg
              mapM_ (\(a, b) -> unless (a == b) (rm a)) p
              z <- getCurrentDirectory
-             f ((z </>) <$> "gmapsupp.img" : map snd p) e)
+             f (z </> "gmapsupp.img") e)
 

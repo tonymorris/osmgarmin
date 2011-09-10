@@ -36,6 +36,6 @@ main =
                                                do UTCTime d' t' <- getCurrentTime
                                                   let d = o </> showGregorian d' </> show t'
                                                   mkdir d
-                                                  mapM_ (\z -> copyFile z (d </> takeFileName z)) p
+                                                  copyFile p (d </> takeFileName p)
                                              else
                                                print e)
