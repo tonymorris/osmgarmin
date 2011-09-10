@@ -3,6 +3,7 @@ module Main where
 import Geo.Garmin
 import System.Exit
 import System.Directory
+import System.Environment
 import System.FilePath
 import Data.Time.Clock
 import Data.Time.Calendar
@@ -28,8 +29,13 @@ maps =
 main ::
   IO ()
 main =
-  resolveMaps maps (\p e -> if e == ExitSuccess
-                              then do d <- ("/mnt/sdb/public/map/Garmin/" ++) . showGregorian . utctDay <$> getCurrentTime
-                                      mkdir d
-                                      mapM_ (\z -> copyFile z (d </> takeFileName z)) p
-                              else print e)
+  do a <- getArgs
+     case a of
+       [] -> putStrLn "Usage: osmgarmin <output-dir>" >> exitWith (ExitFailure 107)
+       (o:_) ->  resolveMaps maps (\p e -> if e == ExitSuccess
+                                             then
+                                               do d <- (o ++) . showGregorian . utctDay <$> getCurrentTime
+                                                  mkdir d
+                                                  mapM_ (\z -> copyFile z (d </> takeFileName z)) p
+                                             else
+                                               print e)

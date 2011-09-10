@@ -144,19 +144,19 @@ bzip ::
   String
   -> IO ExitCode
 bzip =
-  system' "/bin/bzip2"
+  system' "bzip2"
 
 wget ::
   String
   -> IO ExitCode
 wget =
-  system' "/usr/bin/wget"
+  system' "wget"
 
 java ::
   String
   -> IO ExitCode
 java =
-  system' "/usr/bin/java -Xmx1536M"
+  system' "java -Xmx1536M"
 
 splitter ::
   String -> IO ExitCode
