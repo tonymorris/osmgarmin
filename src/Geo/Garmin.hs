@@ -233,7 +233,7 @@ resolveMapType ::
   -> IO FilePath
 resolveMapType (OpenStreetMap i) f =
   chdirw (do _ <- splitter (f ++ " --cache --mapid=" ++ mid i)
-             _ <- mkgmap ("--route --latin1 --net --code-page=1252 --transparent --gmapsupp -c template.args")
+             _ <- mkgmap ("--route --net --transparent --gmapsupp -c template.args")
              loop_
                ((or <$>) . mapM doesFileExist)
                (mapM_ rm)
