@@ -13,7 +13,7 @@ maps =
     Map {
       mtype = OpenStreetMap (mapname' "82345912"),
       compression = Bzip,
-      source = URL "http://download.geofabrik.de/osm/australia-oceania.osm.bz2"
+      source = URL "http://downloads.cloudmade.com/oceania/australia_and_new_zealand/australia/australia.osm.bz2"
     }
   , 
     Map {
