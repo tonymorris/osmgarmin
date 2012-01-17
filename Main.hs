@@ -13,13 +13,13 @@ maps =
     Map {
       mtype = OpenStreetMap (mapname' "82345912"),
       compression = Bzip,
-      source = URL "http://downloads.cloudmade.com/oceania/australia_and_new_zealand/australia/australia.osm.bz2"
+      source = URL "http://localhost/osm/australia-oceania.osm.bz2"
     }
   , 
     Map {
       mtype = Garmin,
       compression = None,
-      source = URL "http://projects.tmorris.net/public/maps/scratch/Mount%20Barney/Brek/Mt_Barney_National_Park_Contours_Streams_etc.img"
+      source = URL "http://localhost/osm/Brek/Mt_Barney_National_Park_Contours_Streams_etc.img"
     }
   ]
 
