@@ -232,8 +232,8 @@ resolveMapType ::
   -> FilePath
   -> IO FilePath
 resolveMapType (OpenStreetMap i) f =
-  chdirw (do _ <- splitter (f ++ " --cache --mapid=" ++ mid i)
-             _ <- mkgmap ("--route --net --transparent --gmapsupp -c template.args")
+  chdirw (do _ <- splitter (f ++ " --mapid=" ++ mid i)
+             _ <- mkgmap ("--route --transparent --gmapsupp -c template.args --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left")
              loop_
                ((or <$>) . mapM doesFileExist)
                (mapM_ rm)
@@ -259,7 +259,7 @@ resolveMaps ::
   -> IO a
 resolveMaps m f =
   chdirw (do p <- mapM resolveMap m
-             e <- mkgmap (("--route --latin1 --net --code-page=1252 --transparent --gmapsupp ") ++ intercalate " " (map fst p))
+             e <- mkgmap (("--route --transparent --gmapsupp --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left ") ++ intercalate " " (map fst p))
              cleanImg
              mapM_ (\(a, b) -> unless (a == b) (rm a)) p
              z <- getCurrentDirectory
