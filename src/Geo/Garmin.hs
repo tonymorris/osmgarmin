@@ -31,18 +31,23 @@ incrementMapName =
 
 data MapType =
   OpenStreetMap {
-    mapname :: MapName
+    osmmapname :: MapName
+  } | Pbf {
+    pbfmapname :: MapName
   } | Garmin -- todo Polish
   deriving (Eq, Show)
 
 foldMapType ::
   (MapName -> a)
+  -> (MapName -> a)
   -> a
   -> MapType
   -> a
-foldMapType o _ (OpenStreetMap i) =
+foldMapType o _ _ (OpenStreetMap i) =
   o i
-foldMapType _ g Garmin =
+foldMapType _ p _ (Pbf i) =
+  p i
+foldMapType _ _ g Garmin =
   g
 
 extension ::
@@ -54,7 +59,7 @@ extension c =
       com Bzip = (++ ".bz2")
       com Gzip = (++ ".gz")
       com Zip  = (++ ".zip")
-  in com c . foldMapType (const ".osm") ".img"
+  in com c . foldMapType (const ".osm") (const ".pbf") ".img"
 
 extension' ::
   Map
@@ -233,11 +238,20 @@ resolveMapType ::
   -> IO FilePath
 resolveMapType (OpenStreetMap i) f =
   chdirw (do _ <- splitter (f ++ " --mapid=" ++ mid i)
-             _ <- mkgmap ("--route --transparent --gmapsupp -c template.args --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left")
+             _ <- mkgmap ("--add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp -c template.args --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left")
              loop_
                ((or <$>) . mapM doesFileExist)
                (mapM_ rm)
                ((\s -> [s ++ ".osm.gz", s ++ ".img"]) . mid <$> iterate incrementMapName i)
+             cleanImg
+             withWorkFile "Map-" ".img" (renameFile "gmapsupp.img"))
+resolveMapType (Pbf i) f =
+  chdirw (do _ <- splitter (f ++ " --mapid=" ++ mid i)
+             _ <- mkgmap ("--add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp -c template.args --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left")
+             loop_
+               ((or <$>) . mapM doesFileExist)
+               (mapM_ rm)
+               ((\s -> [s ++ ".osm.pbf.gz", s ++ ".img"]) . mid <$> iterate incrementMapName i)
              cleanImg
              withWorkFile "Map-" ".img" (renameFile "gmapsupp.img"))
 resolveMapType Garmin f =
@@ -259,7 +273,7 @@ resolveMaps ::
   -> IO a
 resolveMaps m f =
   chdirw (do p <- mapM resolveMap m
-             e <- mkgmap (("--route --transparent --gmapsupp --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left ") ++ intercalate " " (map fst p))
+             e <- mkgmap (("--add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp --description=\"Australia and Oceania and Mt Barney Contour\" --country-name=\"Australia and Oceania\" --country-abbr=AU --drive-on-left ") ++ intercalate " " (map fst p))
              cleanImg
              mapM_ (\(a, b) -> unless (a == b) (rm a)) p
              z <- getCurrentDirectory

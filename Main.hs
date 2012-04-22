@@ -11,9 +11,9 @@ maps ::
 maps =
   [
     Map {
-      mtype = OpenStreetMap (mapname' "82345912"),
-      compression = Bzip,
-      source = URL "http://downloads.cloudmade.com/oceania/australia_and_new_zealand/australia/australia.osm.bz2"
+      mtype = Pbf (mapname' "82345912"),
+      compression = None,
+      source = URL "http://download.geofabrik.de/osm/australia-oceania/australia.osm.pbf"
     }
   , 
     Map {
