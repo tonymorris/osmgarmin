@@ -13,7 +13,7 @@ maps =
     Map {
       mtype = Pbf (mapname' "82345912"),
       compression = None,
-      source = URL "http://download.geofabrik.de/osm/australia-oceania/australia.osm.pbf"
+      source = URL "http://download.geofabrik.de/openstreetmap/australia-oceania.osm.pbf"
     }
   , 
     Map {
