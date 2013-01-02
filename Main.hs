@@ -19,7 +19,7 @@ maps =
     Map {
       mtype = Garmin,
       compression = None,
-      source = URL "http://projects.tmorris.net/public/maps/scratch/Mount%20Barney/Brek/Mt_Barney_National_Park_Contours_Streams_etc.img"
+      source = URL "http://bitbucket.org/dibblego/tracks-by-hand/raw/master/Mount Barney/Brek/Mt_Barney_National_Park_Contours_Streams_etc.img"
     }
   ]
 
