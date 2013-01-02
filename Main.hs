@@ -15,12 +15,6 @@ maps =
       compression = None,
       source = URL "http://download.geofabrik.de/openstreetmap/australia-oceania.osm.pbf"
     }
-  , 
-    Map {
-      mtype = Garmin,
-      compression = None,
-      source = URL "http://bitbucket.org/dibblego/tracks-by-hand/raw/master/Mount Barney/Brek/Mt_Barney_National_Park_Contours_Streams_etc.img"
-    }
   ]
 
 main ::
