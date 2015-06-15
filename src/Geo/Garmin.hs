@@ -3,12 +3,11 @@ module Geo.Garmin where
 import Data.Time
 import Data.Char
 import Data.List
-import System.Cmd
+import System.Process
 import System.Exit
 import System.Directory
 import System.FilePath
 import Control.Monad
-import Control.Applicative
 import Control.Exception
 
 newtype MapName = MapName {
