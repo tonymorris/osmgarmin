@@ -15,6 +15,11 @@ maps =
       compression = None,
       source = URL "http://download.geofabrik.de/australia-oceania-latest.osm.pbf"
     }
+  , Map {
+      mtype = Garmin,
+      compression = None,
+      source = File "/home/tmorris/Desktop/Mt_Barney_National_Park.img"
+    }
   ]
 
 main ::
