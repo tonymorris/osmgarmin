@@ -126,7 +126,7 @@ loop_ p a  (x:xs) =
 work ::
   IO FilePath
 work =
-  do t <- getTemporaryDirectory
+  do _ <- getTemporaryDirectory
      let d = "/home/tmorris/Desktop" </> "osmgarmin"
      mkdir d
      return d
