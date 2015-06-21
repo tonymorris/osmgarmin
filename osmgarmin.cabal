@@ -34,6 +34,7 @@ library
                     , sys-process >= 0.1.4
                     , lens >= 4.0
                     , notzero >= 0.0.10
+                    , transformers >= 0.4
    
   ghc-options:
                     -Wall

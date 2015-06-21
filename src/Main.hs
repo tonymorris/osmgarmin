@@ -1,48 +1,12 @@
 module Main where
 
-{-
-import Geo.Garmin
-import System.Exit
-import System.Environment
-import System.FilePath
--}
+import Control.Monad.Trans.Class
 import System.Environment
 import System.FilePath
 import Data.Time
 import Sys.Exit
 import Data.NotZero
 import Data.NotZeroOr
-
-{-
-maps ::
-  [Map]
-maps =
-  [
-    Map {
-      mtype = Pbf (mapname' "82345912"),
-      compression = None,
-      source = URL "http://localhost:8000/map.pbf"
-    }
-  , Map {
-      mtype = Garmin,
-      compression = None,
-      source = File "/home/tmorris/Desktop/Mt_Barney_National_Park.img"
-    }
-  ]
-
-main ::
-  IO ()
-main =
-  do a <- getArgs
-     case a of
-       [] -> putStrLn "Usage: osmgarmin <output-dir>" >> exitWith (ExitFailure 107)
-       (o:_) ->  resolveMaps maps (\p e -> if e == ExitSuccess
-                                             then
-                                               do mkdir o 
-                                                  copyFile p (o </> takeFileName p)
-                                             else
-                                               print e)
--}
 
 time ::
   UTCTime
@@ -108,6 +72,16 @@ gmapsuppAustraliaOceania wd =
     , "--check-roundabouts"
     ]
 
+linkAustraliaOceania ::
+  FilePath
+  -> CreateProcess
+linkAustraliaOceania wd =
+  procIn (wd </> "dist" </> "australia-oceania") "ln"
+    [
+      "-s"
+    , ".." </> ".." </> "build" </> "australia-oceania" </> "gmapsupp.img"
+    ]
+
 getMountBarney ::
   FilePath
   -> CreateProcess    
@@ -147,6 +121,16 @@ gmapsuppMountBarneyAustraliaOceania wd =
      , wd </> "download" </> "mt-barney-national-park.img"
      ]
 
+linkAustraliaOceaniaMountBarney ::
+  FilePath
+  -> CreateProcess
+linkAustraliaOceaniaMountBarney wd =
+  procIn (wd </> "dist" </> "australia-oceania_mt-barney") "ln"
+    [
+      "-s"
+    , ".." </> ".." </> "build" </> "australia-oceania_mt-barney" </> "gmapsupp.img"
+    ]
+
 commands ::
   FilePath
   -> [CreateProcess]
@@ -156,25 +140,43 @@ commands =
       getAustraliaOceania
     , splitAustraliaOceania
     , gmapsuppAustraliaOceania
+    , linkAustraliaOceania
     , getMountBarney
     , gmapsuppMountBarneyAustraliaOceania
+    , linkAustraliaOceaniaMountBarney
     ]
   
 
 {-
 
 refactor non-IO
-copy to dist directory
-copy to latest directory
-move accessory functions to relevant package
+mkgmap, splitter
 
 -}
 
+
+linkLatest ::
+  FilePath
+  -> String
+  -> CreateProcess
+linkLatest d t =
+  procIn d "ln"
+    [
+      "-f"
+    , "-s"
+    , "-n"
+    , t
+    , "latest"
+    ]
+
 run2 ::
   FilePath
-  -> IO ()
-run2 wd =
-  getCurrentTime >>= createMakeWaitProcessesExit . commands . (</>) wd . time
+  -> ExitCodeM IO
+run2 d =
+  do t <- lift getCurrentTime
+     let u = time t
+     createMakeWaitProcesses . commands . (</>) d $ u
+     createMakeWaitProcessM (linkLatest d u)
 
 main2 ::
   IO ()
@@ -182,27 +184,5 @@ main2 =
   do a <- getArgs
      case a of
        [] -> putStrLn "Usage: osmgarmin <output-dir>" >> exitWith (IsNotZero (notZeroElse1 127))
-       (o:_) ->  run2 o
-
-{-
-
-
->>> /home/tmorris/Desktop/osmgarmin
-wget -q -c http://localhost:8000/map.pbf -O Source-2015-06-20_12:46:08.400393_UTC.pbf
->>> /home/tmorris/Desktop/osmgarmin
-java -Xmx1536M -jar /home/tmorris/opt/splitter/splitter.jar Source-2015-06-20_12:46:08.400393_UTC.pbf --mapid=82345912
->>> /home/tmorris/Desktop/osmgarmin
-java -Xmx1536M -jar /home/tmorris/opt/mkgmap/mkgmap.jar --add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp -c template.args --description="Australia and Oceania and Mt Barney Contour" --country-name="Australia and Oceania" --country-abbr=AU --drive-on-left
->>> /home/tmorris/Desktop/osmgarmin
-java -Xmx1536M -jar /home/tmorris/opt/mkgmap/mkgmap.jar --add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp --description="Australia and Oceania and Mt Barney Contour" --country-name="Australia and Oceania" --country-abbr=AU --drive-on-left Map-2015-06-20_12:46:10.180637_UTC.img /home/tmorris/Desktop/Mt_Barney_National_Park.img
-
-----
-
->>> /home/tmorris/Desktop/osmgarmin
-wget -q -c http://localhost:8000/map.pbf -O Source-2015-06-20_12:49:50.622964_UTC.pbf
->>> /home/tmorris/Desktop/osmgarmin
-java -Xmx1536M -jar /home/tmorris/opt/mkgmap/mkgmap.jar --add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp -c template.args --description="Australia and Oceania and Mt Barney Contour" --country-name="Australia and Oceania" --country-abbr=AU --drive-on-left
->>> /home/tmorris/Desktop/osmgarmin
-java -Xmx1536M -jar /home/tmorris/opt/mkgmap/mkgmap.jar --add-pois-to-areas --reduce-point-density-polygon=8 --remove-short-arcs --route --transparent --gmapsupp --description="Australia and Oceania and Mt Barney Contour" --country-name="Australia and Oceania" --country-abbr=AU --drive-on-left Map-2015-06-20_13:20:14.998182_UTC.img /home/tmorris/Desktop/Mt_Barney_National_Park.img
-
--}
+       (o:_) -> exit (run2 o)
+       
