@@ -13,7 +13,7 @@ maps =
     Map {
       mtype = Pbf (mapname' "82345912"),
       compression = None,
-      source = URL "http://download.geofabrik.de/australia-oceania-latest.osm.pbf"
+      source = URL "http://localhost:8000/map.pbf"
     }
   , Map {
       mtype = Garmin,

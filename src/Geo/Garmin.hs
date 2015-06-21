@@ -127,7 +127,7 @@ work ::
   IO FilePath
 work =
   do t <- getTemporaryDirectory
-     let d = t </> "osmgarmin"
+     let d = "/home/tmorris/Desktop" </> "osmgarmin"
      mkdir d
      return d
 
@@ -142,7 +142,12 @@ system' ::
   -> String
   -> IO ExitCode
 system' c s =
-  system (c ++ ' ' : s)
+  do let r = c ++ ' ' : s
+     d <- getCurrentDirectory
+     appendFile "/home/tmorris/Desktop/osmgarmin.out" (">>> " ++ d ++ "\n")
+     appendFile "/home/tmorris/Desktop/osmgarmin.out" (r ++ "\n")
+     e <- system r
+     return e
 
 bzip ::
   String
@@ -165,13 +170,13 @@ java =
 splitter ::
   String -> IO ExitCode
 splitter s =
-  java ("-jar /opt/splitter/splitter.jar " ++ s)
+  java ("-jar /home/tmorris/opt/splitter/splitter.jar " ++ s)
 
 mkgmap ::
   String
   -> IO ExitCode
 mkgmap s =
-  java ("-jar /opt/mkgmap/mkgmap.jar " ++  s)
+  java ("-jar /home/tmorris/opt/mkgmap/mkgmap.jar " ++  s)
 
 -- | Change to the given directory, then execute the given action, then change back to the original directory.
 chdir ::
