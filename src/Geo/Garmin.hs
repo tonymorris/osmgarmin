@@ -29,7 +29,7 @@ module Geo.Garmin(
 ) where
 
 #if !(MIN_VERSION_base(4,8,0))
-  import Control.Applicative(Applicative)
+import Control.Applicative(Applicative((<*>), pure))
 #endif
 import Data.Time(UTCTime(utctDay, utctDayTime), TimeOfDay(TimeOfDay), toGregorian, timeToTimeOfDay)
 import Sys.Exit(CreateProcess, procIn)
