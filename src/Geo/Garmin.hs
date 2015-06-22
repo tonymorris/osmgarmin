@@ -1,27 +1,5 @@
 {-# LANGUAGE CPP #-}
 
-{-
-[
-      getAustraliaOceania
-    , splitAustraliaOceania
-    , gmapsuppAustraliaOceania
-    , md5AustraliaOceania
-    , sha1AustraliaOceania
-    , sha256AustraliaOceania
-    , linkAustraliaOceania
-    , linkmd5AustraliaOceania
-    , linksha1AustraliaOceania
-    , linksha256AustraliaOceania
-    , getMountBarney
-    , gmapsuppMountBarneyAustraliaOceania
-    , md5AustraliaOceaniaMountBarney
-    , sha1AustraliaOceaniaMountBarney
-    , sha256AustraliaOceaniaMountBarney
-    , linkAustraliaOceaniaMountBarney
-    , linkmd5AustraliaOceaniaMountBarney
-    , linksha1AustraliaOceaniaMountBarney
-    , linksha256AustraliaOceaniaMountBarney
-    ]-}
 module Geo.Garmin(
   time
 , downloadDirectory
@@ -29,8 +7,6 @@ module Geo.Garmin(
 , distDirectory
 , mkgmap
 , splitter
-, gmapsuppHash
-, gmapsuppLink
 , australiaOceaniaPbf
 , getAustraliaOceania
 , getAustraliaOceania'
@@ -38,26 +14,14 @@ module Geo.Garmin(
 , splitAustraliaOceania'
 , gmapsuppAustraliaOceania
 , gmapsuppAustraliaOceania'
-, md5AustraliaOceania
-, sha1AustraliaOceania
-, sha256AustraliaOceania
 , linkAustraliaOceania
 , linkAustraliaOceania'
-, linkmd5AustraliaOceania
-, linksha1AustraliaOceania
-, linksha256AustraliaOceania
 , getMountBarney
 , getMountBarney'
 , gmapsuppMountBarneyAustraliaOceania
 , gmapsuppMountBarneyAustraliaOceania'
-, md5AustraliaOceaniaMountBarney
-, sha1AustraliaOceaniaMountBarney
-, sha256AustraliaOceaniaMountBarney
 , linkAustraliaOceaniaMountBarney
 , linkAustraliaOceaniaMountBarney'
-, linkmd5AustraliaOceaniaMountBarney
-, linksha1AustraliaOceaniaMountBarney
-, linksha256AustraliaOceaniaMountBarney
 , commands
 , linkLatest
 , Parameters(..)
@@ -67,7 +31,6 @@ module Geo.Garmin(
 #if !(MIN_VERSION_base(4,8,0))
 import Control.Applicative(Applicative((<*>), pure))
 #endif
-import Data.Char(toUpper)
 import Data.Time(UTCTime(utctDay, utctDayTime), TimeOfDay(TimeOfDay), toGregorian, timeToTimeOfDay)
 import Sys.Exit(CreateProcess, procIn)
 import System.FilePath((</>))
@@ -107,32 +70,6 @@ splitter ::
   FilePath
 splitter =
   "opt" </> "splitter" </> "splitter.jar"
-
-gmapsuppHash ::
-  String
-  -> FilePath
-  -> ReadParameters CreateProcess
-gmapsuppHash s wd =
-  ReadParameters (\(Parameters w _ _) ->
-    procIn (w </> buildDirectory </> wd) s
-      [
-        "-q"
-      , "gmapsupp.img"
-      , ">"
-      , "gmapsupp.img." ++ map toUpper s
-      ])
-
-gmapsuppLink ::
-  String
-  -> FilePath
-  -> ReadParameters CreateProcess
-gmapsuppLink s wd =
-  ReadParameters (\(Parameters w _ _) ->
-    procIn (w </> distDirectory </> wd) "ln"
-      [
-        "-s"
-      , ".." </> ".." </> buildDirectory </> "australia-oceania" </> ("gmapsupp.img." ++ map toUpper s)
-      ])
 
 australiaOceaniaPbf ::
   FilePath
@@ -208,21 +145,6 @@ gmapsuppAustraliaOceania' wd m =
     , "--check-roundabouts"
     ]
 
-md5AustraliaOceania ::
-  ReadParameters CreateProcess
-md5AustraliaOceania =
-  gmapsuppHash "md5" "australia-oceania"
-
-sha1AustraliaOceania ::
-  ReadParameters CreateProcess
-sha1AustraliaOceania =
-  gmapsuppHash "sha1" "australia-oceania"
-
-sha256AustraliaOceania ::
-  ReadParameters CreateProcess
-sha256AustraliaOceania =
-  gmapsuppHash "sha256" "australia-oceania"
-
 linkAustraliaOceania ::
   ReadParameters CreateProcess
 linkAustraliaOceania =
@@ -237,21 +159,6 @@ linkAustraliaOceania' wd =
       "-s"
     , ".." </> ".." </> buildDirectory </> "australia-oceania" </> "gmapsupp.img"
     ]
-
-linkmd5AustraliaOceania ::
-  ReadParameters CreateProcess
-linkmd5AustraliaOceania =
-  gmapsuppLink "md5" "australia-oceania"
-
-linksha1AustraliaOceania ::
-  ReadParameters CreateProcess
-linksha1AustraliaOceania =
-  gmapsuppLink "sha1" "australia-oceania"
-
-linksha256AustraliaOceania ::
-  ReadParameters CreateProcess
-linksha256AustraliaOceania =
-  gmapsuppLink "sha256" "australia-oceania"
 
 getMountBarney ::
   ReadParameters CreateProcess
@@ -303,21 +210,6 @@ gmapsuppMountBarneyAustraliaOceania' wd m =
      , wd </> downloadDirectory </> "mt-barney-national-park.img"
      ]
 
-md5AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-md5AustraliaOceaniaMountBarney =
-  gmapsuppHash "md5" "australia-oceania_mt-barney"
-
-sha1AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-sha1AustraliaOceaniaMountBarney =
-  gmapsuppHash "sha1" "australia-oceania_mt-barney"
-
-sha256AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-sha256AustraliaOceaniaMountBarney =
-  gmapsuppHash "sha256" "australia-oceania_mt-barney"
-
 linkAustraliaOceaniaMountBarney ::
   ReadParameters CreateProcess
 linkAustraliaOceaniaMountBarney =
@@ -333,21 +225,6 @@ linkAustraliaOceaniaMountBarney' wd =
     , ".." </> ".." </> buildDirectory </> "australia-oceania_mt-barney" </> "gmapsupp.img"
     ]
 
-linkmd5AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-linkmd5AustraliaOceaniaMountBarney =
-  gmapsuppLink "md5" "australia-oceania_mt-barney"
-
-linksha1AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-linksha1AustraliaOceaniaMountBarney =
-  gmapsuppLink "sha1" "australia-oceania_mt-barney"
-
-linksha256AustraliaOceaniaMountBarney ::
-  ReadParameters CreateProcess
-linksha256AustraliaOceaniaMountBarney =
-  gmapsuppLink "sha256" "australia-oceania_mt-barney"
-
 commands ::
   ReadParameters [CreateProcess]
 commands =
@@ -356,22 +233,10 @@ commands =
       getAustraliaOceania
     , splitAustraliaOceania
     , gmapsuppAustraliaOceania
-    , md5AustraliaOceania
-    , sha1AustraliaOceania
-    , sha256AustraliaOceania
     , linkAustraliaOceania
-    , linkmd5AustraliaOceania
-    , linksha1AustraliaOceania
-    , linksha256AustraliaOceania
     , getMountBarney
     , gmapsuppMountBarneyAustraliaOceania
-    , md5AustraliaOceaniaMountBarney
-    , sha1AustraliaOceaniaMountBarney
-    , sha256AustraliaOceaniaMountBarney
     , linkAustraliaOceaniaMountBarney
-    , linkmd5AustraliaOceaniaMountBarney
-    , linksha1AustraliaOceaniaMountBarney
-    , linksha256AustraliaOceaniaMountBarney
     ]
 
 linkLatest ::
