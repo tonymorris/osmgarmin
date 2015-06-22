@@ -1,7 +1,0 @@
-:set -isrc
-:m + Test.QuickCheck
-:l Main
-:m + Main
-:set prompt ">> "
-:set -Wall
-
