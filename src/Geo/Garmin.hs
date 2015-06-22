@@ -3,18 +3,27 @@ module Geo.Garmin(
 , downloadDirectory
 , buildDirectory
 , distDirectory
-, australiaOceaniaPbf
 , mkgmap
 , splitter
+, australiaOceaniaPbf
 , getAustraliaOceania
+, getAustraliaOceania'
 , splitAustraliaOceania
+, splitAustraliaOceania'
 , gmapsuppAustraliaOceania
+, gmapsuppAustraliaOceania'
 , linkAustraliaOceania
+, linkAustraliaOceania'
 , getMountBarney
+, getMountBarney'
 , gmapsuppMountBarneyAustraliaOceania
+, gmapsuppMountBarneyAustraliaOceania'
 , linkAustraliaOceaniaMountBarney
+, linkAustraliaOceaniaMountBarney'
 , commands
 , linkLatest
+, Parameters(..)
+, ReadParameters(..)
 ) where
 
 import Data.Time(UTCTime(utctDay, utctDayTime), TimeOfDay(TimeOfDay), toGregorian, timeToTimeOfDay)
@@ -47,25 +56,30 @@ distDirectory ::
 distDirectory =
   "dist"
 
-australiaOceaniaPbf ::
-  FilePath
-australiaOceaniaPbf =
-  "australia-oceania.osm.pbf"
-
 mkgmap ::
   FilePath
 mkgmap =
   "opt" </> "mkgmap" </> "mkgmap.jar"
-
+  
 splitter ::
   FilePath
 splitter =
   "opt" </> "splitter" </> "splitter.jar"
 
+australiaOceaniaPbf ::
+  FilePath
+australiaOceaniaPbf =
+  "australia-oceania.osm.pbf"
+
 getAustraliaOceania ::
+  ReadParameters CreateProcess
+getAustraliaOceania =
+  ReadParameters (\(Parameters w _ _) -> getAustraliaOceania' w)
+
+getAustraliaOceania' ::
   FilePath
   -> CreateProcess
-getAustraliaOceania wd =
+getAustraliaOceania' wd =
   procIn (wd </> downloadDirectory) "wget"
     [
       "-q"
@@ -77,27 +91,39 @@ getAustraliaOceania wd =
     ]
     
 splitAustraliaOceania ::
+  ReadParameters CreateProcess
+splitAustraliaOceania =
+  ReadParameters (\(Parameters w _ s) -> splitAustraliaOceania' w s)
+
+splitAustraliaOceania' ::
   FilePath
+  -> FilePath
   -> CreateProcess
-splitAustraliaOceania wd =
+splitAustraliaOceania' wd s =
   procIn (wd </> buildDirectory </> "australia-oceania") "java"
     [
       "-Xmx1536M"
     , "-jar"
-    , splitter
+    , s
     , wd </> downloadDirectory </> australiaOceaniaPbf
     , "--mapid=82345912"
     ]
 
 gmapsuppAustraliaOceania ::
+  ReadParameters CreateProcess
+gmapsuppAustraliaOceania =
+  ReadParameters (\(Parameters w m _) -> gmapsuppAustraliaOceania' w m)
+
+gmapsuppAustraliaOceania' ::
   FilePath
+  -> FilePath
   -> CreateProcess
-gmapsuppAustraliaOceania wd =
+gmapsuppAustraliaOceania' wd m =
   procIn (wd </> buildDirectory </> "australia-oceania") "java"
     [
       "-Xmx1536M"
     , "-jar"
-    , mkgmap
+    , m
     , "--add-pois-to-areas"
     , "--reduce-point-density-polygon=8"
     , "--remove-short-arcs"
@@ -116,9 +142,14 @@ gmapsuppAustraliaOceania wd =
     ]
 
 linkAustraliaOceania ::
+  ReadParameters CreateProcess
+linkAustraliaOceania =
+  ReadParameters (\(Parameters w _ _) -> linkAustraliaOceania' w)
+
+linkAustraliaOceania' ::
   FilePath
   -> CreateProcess
-linkAustraliaOceania wd =
+linkAustraliaOceania' wd =
   procIn (wd </> distDirectory </> "australia-oceania") "ln"
     [
       "-s"
@@ -126,9 +157,14 @@ linkAustraliaOceania wd =
     ]
 
 getMountBarney ::
+  ReadParameters CreateProcess
+getMountBarney =
+  ReadParameters (\(Parameters w _ _) -> getMountBarney' w)
+
+getMountBarney' ::
   FilePath
   -> CreateProcess    
-getMountBarney wd =
+getMountBarney' wd =
   procIn (wd </> downloadDirectory) "wget"
     [
       "-q"
@@ -139,14 +175,20 @@ getMountBarney wd =
     ]
 
 gmapsuppMountBarneyAustraliaOceania ::
+  ReadParameters CreateProcess
+gmapsuppMountBarneyAustraliaOceania =
+  ReadParameters (\(Parameters w m _) -> gmapsuppMountBarneyAustraliaOceania' w m)
+
+gmapsuppMountBarneyAustraliaOceania' ::
   FilePath
+  -> FilePath
   -> CreateProcess
-gmapsuppMountBarneyAustraliaOceania wd =
+gmapsuppMountBarneyAustraliaOceania' wd m =
   procIn (wd </> buildDirectory </> "australia-oceania_mt-barney") "java"
     [
       "-Xmx1536M"
      , "-jar"
-     , mkgmap
+     , m
      , "--add-pois-to-areas"
      , "--reduce-point-density-polygon=8"
      , "--remove-short-arcs"
@@ -165,9 +207,14 @@ gmapsuppMountBarneyAustraliaOceania wd =
      ]
 
 linkAustraliaOceaniaMountBarney ::
+  ReadParameters CreateProcess
+linkAustraliaOceaniaMountBarney =
+  ReadParameters (\(Parameters w _ _) -> linkAustraliaOceaniaMountBarney' w)
+
+linkAustraliaOceaniaMountBarney' ::
   FilePath
   -> CreateProcess
-linkAustraliaOceaniaMountBarney wd =
+linkAustraliaOceaniaMountBarney' wd =
   procIn (wd </> distDirectory </> "australia-oceania_mt-barney") "ln"
     [
       "-s"
@@ -175,8 +222,7 @@ linkAustraliaOceaniaMountBarney wd =
     ]
 
 commands ::
-  FilePath
-  -> [CreateProcess]
+  ReadParameters [CreateProcess]
 commands =
   sequence
     [
@@ -202,3 +248,34 @@ linkLatest d t =
     , t
     , "latest"
     ]
+
+----
+
+data Parameters =
+  Parameters
+    FilePath -- working directory
+    FilePath -- mkgmap
+    FilePath -- splitter
+  deriving (Eq, Ord, Show)
+
+newtype ReadParameters a =
+  ReadParameters {
+    (~>.) ::
+      Parameters -> a
+  }
+
+instance Functor ReadParameters where
+  fmap f (ReadParameters g) =
+    ReadParameters (f . g)
+
+instance Applicative ReadParameters where
+  pure =
+    ReadParameters . const
+  ReadParameters f <*> ReadParameters a =
+    ReadParameters (f <*> a)
+
+instance Monad ReadParameters where
+  return =
+    pure
+  ReadParameters r >>= f =
+    ReadParameters (\x -> f (r x) ~>. x)
