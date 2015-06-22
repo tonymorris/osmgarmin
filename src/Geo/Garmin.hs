@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Geo.Garmin(
   time
 , downloadDirectory
@@ -26,6 +28,9 @@ module Geo.Garmin(
 , ReadParameters(..)
 ) where
 
+#if !(MIN_VERSION_base(4,8,0))
+  import Control.Applicative(Applicative)
+#endif
 import Data.Time(UTCTime(utctDay, utctDayTime), TimeOfDay(TimeOfDay), toGregorian, timeToTimeOfDay)
 import Sys.Exit(CreateProcess, procIn)
 import System.FilePath((</>))
