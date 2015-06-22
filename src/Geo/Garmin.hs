@@ -84,8 +84,7 @@ getAustraliaOceania' wd =
     [
       "-q"
     , "-c"
-    -- http://download.geofabrik.de/australia-oceania-latest.osm.pbf
-    , "http://localhost:8000/map.pbf"
+    , "http://download.geofabrik.de/australia-oceania-latest.osm.pbf"
     , "-O"
     , australiaOceaniaPbf
     ]
