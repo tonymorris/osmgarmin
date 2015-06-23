@@ -176,6 +176,7 @@ getMountBarney' wd =
     , "https://dl.dropboxusercontent.com/u/7810909/img/Mt_Barney_National_Park.img"
     , "-O"
     , "mt-barney-national-park.img"
+    , "--no-check-certificate"
     ]
 
 gmapsuppMountBarneyAustraliaOceania ::
