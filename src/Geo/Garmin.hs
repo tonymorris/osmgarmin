@@ -87,8 +87,7 @@ getAustraliaOceania' ::
 getAustraliaOceania' wd =
   procIn (wd </> downloadDirectory) "wget"
     [
-      "-q"
-    , "-c"
+      "-c"
     , "http://download.geofabrik.de/australia-oceania-latest.osm.pbf"
     , "-O"
     , australiaOceaniaPbf
@@ -171,8 +170,7 @@ getMountBarney' ::
 getMountBarney' wd =
   procIn (wd </> downloadDirectory) "wget"
     [
-      "-q"
-    , "-c"
+      "-c"
     , "https://dl.dropboxusercontent.com/u/7810909/img/Mt_Barney_National_Park.img"
     , "-O"
     , "mt-barney-national-park.img"
