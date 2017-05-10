@@ -1,5 +1,5 @@
 name:               osmgarmin
-version:            0.0.3
+version:            0.0.4
 license:            BSD3
 license-file:       LICENCE
 author:             Tony Morris <ʇǝu˙sıɹɹoɯʇ@ןןǝʞsɐɥ> <dibblego>
@@ -31,9 +31,9 @@ library
                     , filepath >= 1.4
                     , directory >= 1.2
                     , process >= 1.2
-                    , sys-process >= 0.1.4
+                    , sys-process == 0.1.6
                     , lens >= 4.0
-                    , notzero >= 0.0.10
+                    , notzero == 0.0.10
                     , transformers >= 0.4
    
   ghc-options:
@@ -58,9 +58,9 @@ executable          osmgarmin
                     , filepath >= 1.4
                     , directory >= 1.2
                     , process >= 1.2
-                    , sys-process >= 0.1.5
+                    , sys-process == 0.1.6
                     , lens >= 4.0
-                    , notzero >= 0.0.10
+                    , notzero == 0.0.10
                     , transformers >= 0.4
 
   ghc-options:
