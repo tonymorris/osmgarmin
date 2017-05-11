@@ -171,10 +171,9 @@ getMountBarney' wd =
   procIn (wd </> downloadDirectory) "wget"
     [
       "-c"
-    , "https://dl.dropboxusercontent.com/u/7810909/img/Mt_Barney_National_Park.img"
+    , "http://geodetics.tmorris.net/misc/img/Mt_Barney_National_Park.img"
     , "-O"
     , "mt-barney-national-park.img"
-    , "--no-check-certificate"
     ]
 
 gmapsuppMountBarneyAustraliaOceania ::
